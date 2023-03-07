@@ -11,6 +11,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.binsearch.data.models.request.BIN
 import com.example.binsearch.data.repository.BINRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -18,27 +19,29 @@ import javax.inject.Inject
 class MainViewModel @Inject constructor(private val binRepository: BINRepository) : ViewModel() {
 
     var binList : MutableLiveData<List<BIN>> = MutableLiveData()
-    private val bin: MutableLiveData<BIN> = MutableLiveData()
+
     var search by mutableStateOf("")
     private set
 
     var isError by mutableStateOf(false)
-        private set
+    private set
     var errorText by mutableStateOf("")
-        private set
+    private set
 
     fun updateSearch(newSearch : String){
         search = newSearch
     }
 
     fun getBin(digits: String) : Boolean {
+
         resetErrors()
 
-        if (digits.isBlank()){
+        if (digits.isEmpty()){
             isError = true
             errorText = "Вы ничего не ввели"
             return false
         }
+
         digits.forEach { char ->
             if (!char.isDigit()){
                 isError = true
@@ -47,25 +50,17 @@ class MainViewModel @Inject constructor(private val binRepository: BINRepository
             }
         }
 
-        viewModelScope.launch {
-            try {
-                val response = binRepository.getBIN(digits)
-                if (response.isSuccessful){
-                    bin.value = response.body()
-                }
-                else {
-                    isError = true
-                    errorText = "Ничего не найдено"
+        viewModelScope.launch(Dispatchers.IO) {
 
-                }
-
-            } catch (ex : Exception){
+            val response = binRepository.getBIN(digits)
+            if (response.isSuccessful){
+                response.body()?.let { binRepository.addBIN(it) }
+            }
+            else {
                 isError = true
-                errorText = ex.message.toString()
+                errorText = "Ничего не найдено"
             }
         }
-
-        bin.value?.let { binRepository.addBIN(bin = it) }
         return true
     }
 

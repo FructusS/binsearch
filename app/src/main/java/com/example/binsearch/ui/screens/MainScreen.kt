@@ -37,10 +37,10 @@ fun MainScreen(viewModel: MainViewModel = viewModel()) {
                     modifier = Modifier.fillMaxWidth(),
                     value = viewModel.search,
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    onValueChange = { viewModel.updateSearch(it.replace(" ", "")) },
+                    onValueChange = { viewModel.updateSearch(it.replace(" ","")) },
                     label = { Text("Поиск") },
-                    singleLine = true,
                     isError = viewModel.isError,
+                    singleLine = true,
                     trailingIcon = {
                         IconButton(
                             onClick = {
@@ -83,11 +83,11 @@ fun MainScreen(viewModel: MainViewModel = viewModel()) {
 fun BinView(bin: BIN) {
     val context = LocalContext.current
 
-    val contactsDialog = Intent(Intent.ACTION_DIAL, Uri.parse("tel:${bin.bank.phone}"));
-    val webDialog = Intent(Intent.ACTION_VIEW, Uri.parse("http://${bin.bank.url}"));
+    val contactsDialog = Intent(Intent.ACTION_DIAL, Uri.parse("tel:${bin.bank?.phone}"));
+    val webDialog = Intent(Intent.ACTION_VIEW, Uri.parse("http://${bin.bank?.url}"));
     val mapDialog = Intent(
         Intent.ACTION_VIEW,
-        Uri.parse("geo:${bin.country.latitude},${bin.country.longitude}")
+        Uri.parse("geo:${bin.country?.latitude},${bin.country?.longitude}")
     );
 
 
@@ -97,11 +97,11 @@ fun BinView(bin: BIN) {
             fontWeight = FontWeight(500)
         )
         Text(
-            text = "Length: ${bin.number.length}",
+            text = "Length: ${bin.number?.length}",
             modifier = Modifier.padding(paddingValues)
         )
         Text(
-            text = "Luhn: ${if (bin.number.luhn) "yes" else "no"}",
+            text = "Luhn: ${if (bin.number?.luhn == true) "yes" else "no"}",
             modifier = Modifier.padding(paddingValues)
         )
         Text(
@@ -115,15 +115,15 @@ fun BinView(bin: BIN) {
             fontWeight = FontWeight(500)
         )
         Text(
-            text = "${bin.country.emoji} ${bin.country.name}",
+            text = "${bin.country?.emoji} ${bin.country?.name}",
             modifier = Modifier.padding(paddingValues)
         )
         Text(
-            text = "Currency: ${bin.country.currency}",
+            text = "Currency: ${bin.country?.currency}",
             modifier = Modifier.padding(paddingValues)
         )
         Text(
-            text = "latitude - longitude ${bin.country.latitude} ${bin.country.longitude}",
+            text = "latitude - longitude ${bin.country?.latitude} ${bin.country?.longitude}",
             modifier = Modifier
                 .padding(paddingValues)
                 .clickable { context.startActivity(mapDialog) }
@@ -134,23 +134,23 @@ fun BinView(bin: BIN) {
         )
 
         Text(
-            text = "Name: ${bin.bank.name} ",
+            text = "Name: ${bin.bank?.name} ",
             modifier = Modifier.padding(paddingValues)
         )
         Text(
-            text = "Url: ${bin.bank.url} ",
+            text = "Url: ${bin.bank?.url} ",
             modifier = Modifier
                 .padding(paddingValues)
                 .clickable { context.startActivity(webDialog) }
         )
         Text(
-            text = "Phone: ${bin.bank.phone} ",
+            text = "Phone: ${bin.bank?.phone} ",
             modifier = Modifier
                 .padding(paddingValues)
                 .clickable { context.startActivity(contactsDialog) }
         )
         Text(
-            text = "City: ${bin.bank.city} ",
+            text = "City: ${bin.bank?.city} ",
             modifier = Modifier.padding(paddingValues)
         )
     }

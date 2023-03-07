@@ -8,12 +8,12 @@ data class BIN(
     @PrimaryKey (autoGenerate = true)
     val id : Long,
     @Embedded
-    val bank: Bank,
+    val bank: Bank? = Bank(),
     val brand: String?,
     @Embedded
-    val country: Country,
+    val country: Country? = Country(),
     @Embedded
-    val number: Number = Number(),
+    val number: Number? = Number(),
     val prepaid: Boolean,
     val scheme: String,
     val type: String
